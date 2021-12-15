@@ -38,7 +38,7 @@ def get_characters(request,role: str = None):
     tags=["CharacterUpdate"]
 )
 def update_character(request,character_id:int,payload:CharacterIn):
-    """character_id is required to update the character"""
+    """character_id is the id of character instance to be updated"""
     character = get_object_or_404(models.Character,id=character_id)
     for attr, value in payload.dict().items():
         if value:
