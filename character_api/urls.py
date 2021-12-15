@@ -16,12 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from character_api.role_api import role_router
+from character_api.character_api import character_router
 from ninja import NinjaAPI
 from django.core.exceptions import ObjectDoesNotExist
 
 
 api = NinjaAPI(csrf=True)
 api.add_router('/role', role_router)
+api.add_router('/character', character_router)
 
 
 @api.exception_handler(ObjectDoesNotExist)

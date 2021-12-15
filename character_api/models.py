@@ -20,7 +20,7 @@ class Alignment(models.TextChoices):
      le="Lawful Evil"
      ne="Neutral Evil"
 
-
+ 
 class Character(models.Model):
     name = models.CharField(unique=True, max_length=255)
     role = models.ForeignKey(Role, null=True, on_delete=models.DO_NOTHING)

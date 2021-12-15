@@ -2,7 +2,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from django import urls
 from character_api.tests.factories.user import UserFactory
-from character_api.tests.factories.character import RoleFactory
+from character_api.tests.factories.character import RoleFactory, CharacterFactory
 from character_api.models import Role
 
 
@@ -68,3 +68,60 @@ class TestRoleApi(TestCase):
         self.assertTrue(
              entity_created
         )
+
+
+class TestCharacterApi(TestCase):
+    URL = urls.reverse("api-1.0.0:character_list")
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = UserFactory()
+    
+    def test_not_logged_in_401_get(self):
+        response = self.client.get(self.URL, format='json')
+        self.assertEqual(response.status_code, 401)
+    
+    # test to get characters list
+    def test_character_list_get(self):
+        self.client.force_login(self.user)
+        CharacterFactory.create_batch(n_roles_in_db := 10)
+        response = self.client.get(
+            urls.reverse("api-1.0.0:character_list")
+        )
+        self.assertEqual(response.status_code, 200)
+        json = response.json()
+        self.assertEqual(len(json), n_roles_in_db)
+        all_have_names = len([j for j in json if "name" in j]) == n_roles_in_db
+        self.assertTrue(all_have_names)
+    
+    # test to get characters by passing role query params
+    def test_character_list_get_with_role(self):
+        self.client.force_login(self.user)
+        role = RoleFactory.create(id=1, label="new-label")
+        CharacterFactory.create_batch(n_roles_in_db := 10, role=role)
+        response = self.client.get(
+            urls.reverse("api-1.0.0:character_list"),
+            {"role": 1}
+        )
+        self.assertEqual(response.status_code, 200)
+        json = response.json()
+        self.assertEqual(len(json), n_roles_in_db)
+        all_have_names = len([j for j in json if "name" in j]) == n_roles_in_db
+        self.assertTrue(all_have_names)
+        self.assertEqual(json[0]["role"]["id"], role.id)
+        self.assertEqual(json[0]["role"]["label"], role.label)
+    
+    # test to update character values using put method
+    def test_character_put(self):
+        self.client.force_login(self.user)
+        character = CharacterFactory.create(id=1, name="new-name")
+        response = self.client.put(
+            urls.reverse("api-1.0.0:character_update", args=[1]),
+            {"name": "new-name-updated"},
+            format='json'
+        )
+        self.assertEqual(response.status_code, 200)
+        json = response.json()
+        self.assertEqual(json["id"], character.id)
+        self.assertEqual((json["name"]), "new-name-updated")
+        
