@@ -26,3 +26,18 @@ Login via [localhost:8000/accounts/login](localhost:8000/accounts/login)
 
 
 
+## Gilbish Kosma's work
+1) Creation of character_api file
+   - In character_api.py i have created the following api:
+     - Api to get the list of characters, user can also filter characters by role,
+     - Api to update the fields of a character.
+
+2) creation of Factory for Character model in tests/factories.py
+   - In tests/factories.py i have created the following factory:
+     - CharacterFactory
+
+3) Writing tests for the Character API
+   - In tests/test_character_api.py i have created the following tests:
+     - test_get_characters_list
+     - test_get_characters_list_with_role
+     - test_update_character

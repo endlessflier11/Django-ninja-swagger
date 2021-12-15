@@ -23,6 +23,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 api = NinjaAPI(csrf=True)
 api.add_router('/role', role_router)
+# Router for the character API
 api.add_router('/character', character_router)
 
 
